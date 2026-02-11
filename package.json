@@ -1,17 +1,36 @@
 {
-  "name": "pf-docs",
+  "name": "pointfree-docs",
   "version": "0.1.0",
   "description": "CLI tool for searching Point-Free library documentation",
   "type": "module",
   "bin": {
     "pf-docs": "./dist/cli.js"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "start": "node dist/cli.js",
-    "link": "npm run build && npm link"
+    "link": "npm run build && npm link",
+    "prepublishOnly": "npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronnie3786/pointfree-docs.git"
+  },
+  "keywords": [
+    "pointfree",
+    "point-free",
+    "swift",
+    "documentation",
+    "cli",
+    "composable-architecture",
+    "tca"
+  ],
+  "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^11.0.0",
     "commander": "^12.0.0",
