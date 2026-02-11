@@ -3,8 +3,8 @@
  */
 
 import chalk from "chalk";
-import { listDocs, getStats, openIndex, closeIndex } from "../lib/index.js";
-import { getLibraryNames, LIBRARIES } from "../config.js";
+import { listDocs, getStats, withIndex } from "../lib/index.js";
+import { getLibrary, LIBRARIES, LIBRARY_NAMES } from "../config.js";
 
 interface ListOptions {
   tree?: boolean;
@@ -12,7 +12,7 @@ interface ListOptions {
   available?: boolean;
 }
 
-export async function listCommand(lib: string | undefined, options: ListOptions): Promise<void> {
+export function listCommand(lib: string | undefined, options: ListOptions): void {
   if (options.available) {
     if (options.json) {
       const libs = LIBRARIES.map(({ shortName, name, repo, description }) => ({
@@ -23,21 +23,19 @@ export async function listCommand(lib: string | undefined, options: ListOptions)
     }
 
     console.log(chalk.bold(`\n📦 Available Libraries\n`));
-    for (const lib of LIBRARIES) {
-      console.log(`  ${chalk.blue(lib.shortName.padEnd(24))} ${lib.description}`);
-      console.log(chalk.gray(`  ${"".padEnd(24)} ${lib.repo}\n`));
+    for (const library of LIBRARIES) {
+      console.log(`  ${chalk.blue(library.shortName.padEnd(24))} ${library.description}`);
+      console.log(chalk.gray(`  ${"".padEnd(24)} ${library.repo}\n`));
     }
     console.log(chalk.gray(`Total: ${LIBRARIES.length} libraries`));
     console.log(chalk.gray(`\nTo download: pf-docs init --libs <name> [<name>...]`));
     return;
   }
 
-  openIndex();
-
-  const docs = listDocs(lib);
-  const stats = getStats();
-
-  closeIndex();
+  const { docs, stats } = withIndex(() => ({
+    docs: listDocs(lib),
+    stats: getStats(),
+  }));
 
   // JSON output for programmatic use
   if (options.json) {
@@ -48,7 +46,7 @@ export async function listCommand(lib: string | undefined, options: ListOptions)
   if (docs.length === 0) {
     if (lib) {
       console.log(chalk.yellow(`\nNo documents found for library: ${lib}`));
-      console.log(chalk.gray(`Available libraries: ${getLibraryNames().join(", ")}`));
+      console.log(chalk.gray(`Available libraries: ${LIBRARY_NAMES.join(", ")}`));
     } else {
       console.log(chalk.yellow(`\nNo documents indexed yet.`));
       console.log(chalk.gray(`Run 'pf-docs init --libs tca dependencies' to get started.`));
@@ -62,7 +60,7 @@ export async function listCommand(lib: string | undefined, options: ListOptions)
   if (!lib) {
     console.log(chalk.gray(`Indexed libraries:`));
     for (const [libName, count] of Object.entries(stats.byLibrary)) {
-      const libConfig = LIBRARIES.find((l) => l.shortName === libName);
+      const libConfig = getLibrary(libName);
       const desc = libConfig?.description || "";
       console.log(chalk.gray(`  ${chalk.blue(libName)}: ${count} docs — ${desc}`));
     }

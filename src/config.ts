@@ -2,6 +2,8 @@
  * Configuration for Point-Free libraries
  */
 
+import { join } from "path";
+
 export interface LibraryConfig {
   name: string;
   shortName: string;
@@ -119,17 +121,16 @@ export function getLibrary(shortName: string): LibraryConfig | undefined {
 }
 
 /**
- * Get all library short names
+ * All library short names
  */
-export function getLibraryNames(): string[] {
-  return LIBRARIES.map((lib) => lib.shortName);
-}
+export const LIBRARY_NAMES = LIBRARIES.map((lib) => lib.shortName);
 
 /**
  * Paths configuration
  */
+const dataDir = new URL("../data", import.meta.url).pathname;
 export const PATHS = {
-  dataDir: new URL("../data", import.meta.url).pathname,
-  reposDir: new URL("../data/repos", import.meta.url).pathname,
-  indexDb: new URL("../data/index.db", import.meta.url).pathname,
+  dataDir,
+  reposDir: join(dataDir, "repos"),
+  indexDb: join(dataDir, "index.db"),
 };

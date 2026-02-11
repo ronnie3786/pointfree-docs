@@ -4,6 +4,8 @@
  * Handles DocC-flavored markdown and converts it to clean, AI-friendly markdown.
  */
 
+import type { DocWithContent } from "./index.js";
+
 /**
  * Extract the title from a markdown document
  * Handles both standard markdown headers and DocC frontmatter
@@ -57,12 +59,7 @@ export function cleanMarkdown(content: string): string {
 /**
  * Format a document for output to the terminal/AI
  */
-export function formatDocForOutput(doc: {
-  library: string;
-  path: string;
-  title: string;
-  content: string;
-}): string {
+export function formatDocForOutput(doc: DocWithContent): string {
   const header = `# ${doc.title}
 
 > Library: ${doc.library}

@@ -3,7 +3,7 @@
  */
 
 import chalk from "chalk";
-import { getDoc, openIndex, closeIndex } from "../lib/index.js";
+import { getDoc, withIndex } from "../lib/index.js";
 import { formatDocForOutput } from "../lib/markdown.js";
 
 interface GetOptions {
@@ -11,12 +11,8 @@ interface GetOptions {
   raw?: boolean;
 }
 
-export async function getCommand(path: string, options: GetOptions = {}): Promise<void> {
-  openIndex();
-
-  const doc = getDoc(path);
-
-  closeIndex();
+export function getCommand(path: string, options: GetOptions = {}): void {
+  const doc = withIndex(() => getDoc(path));
 
   if (!doc) {
     if (options.json) {
@@ -29,7 +25,6 @@ export async function getCommand(path: string, options: GetOptions = {}): Promis
     return;
   }
 
-  // JSON output for programmatic use
   if (options.json) {
     console.log(JSON.stringify(doc, null, 2));
     return;

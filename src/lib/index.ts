@@ -10,6 +10,21 @@ import { PATHS, LibraryConfig } from "../config.js";
 import { getDocsPaths } from "./repos.js";
 import { cleanMarkdown, extractTitle } from "./markdown.js";
 
+export interface DocEntry {
+  library: string;
+  path: string;
+  title: string;
+}
+
+export interface DocWithContent extends DocEntry {
+  content: string;
+}
+
+export interface IndexStats {
+  totalDocs: number;
+  byLibrary: Record<string, number>;
+}
+
 let db: Database.Database | null = null;
 
 /**
@@ -96,11 +111,10 @@ export function indexLibrary(lib: LibraryConfig): number {
       try {
         const content = readFileSync(fullPath, "utf-8");
 
-        // Clean the markdown and extract title
         const cleanedContent = cleanMarkdown(content);
         const title = extractTitle(content) || basename(file, ".md");
 
-        // Create a logical path like "tca/Testing" or "tca/Articles/Performance"
+        // Logical path like "tca/Testing" or "tca/Articles/Performance"
         const docPath = `${lib.shortName}/${file.replace(/\.md$/, "")}`;
 
         insertStmt.run(lib.shortName, docPath, title, cleanedContent);
@@ -201,14 +215,18 @@ function fallbackSearch(query: string, options: { lib?: string; limit?: number }
   sql += ` LIMIT ?`;
   params.push(limit);
 
-  const stmt = db.prepare(sql);
-  return stmt.all(...params) as SearchResult[];
+  try {
+    const stmt = db.prepare(sql);
+    return stmt.all(...params) as SearchResult[];
+  } catch {
+    return [];
+  }
 }
 
 /**
  * List all indexed documents
  */
-export function listDocs(lib?: string): { library: string; path: string; title: string }[] {
+export function listDocs(lib?: string): DocEntry[] {
   const db = openIndex();
 
   let sql = `SELECT library, path, title FROM docs`;
@@ -222,23 +240,23 @@ export function listDocs(lib?: string): { library: string; path: string; title: 
   sql += ` ORDER BY library, path`;
 
   const stmt = db.prepare(sql);
-  return stmt.all(...params) as { library: string; path: string; title: string }[];
+  return stmt.all(...params) as DocEntry[];
 }
 
 /**
  * Get a specific document by path
  */
-export function getDoc(path: string): { library: string; path: string; title: string; content: string } | null {
+export function getDoc(path: string): DocWithContent | null {
   const db = openIndex();
 
   const stmt = db.prepare(`SELECT library, path, title, content FROM docs WHERE path = ?`);
-  return stmt.get(path) as { library: string; path: string; title: string; content: string } | null;
+  return stmt.get(path) as DocWithContent | null;
 }
 
 /**
  * Get index statistics
  */
-export function getStats(): { totalDocs: number; byLibrary: Record<string, number> } {
+export function getStats(): IndexStats {
   const db = openIndex();
 
   const totalStmt = db.prepare(`SELECT COUNT(*) as count FROM docs`);
@@ -246,13 +264,21 @@ export function getStats(): { totalDocs: number; byLibrary: Record<string, numbe
 
   const byLibStmt = db.prepare(`SELECT library, COUNT(*) as count FROM docs GROUP BY library`);
   const byLibRows = byLibStmt.all() as { library: string; count: number }[];
-
-  const byLibrary: Record<string, number> = {};
-  for (const row of byLibRows) {
-    byLibrary[row.library] = row.count;
-  }
+  const byLibrary = Object.fromEntries(byLibRows.map((row) => [row.library, row.count]));
 
   return { totalDocs: total, byLibrary };
+}
+
+/**
+ * Run a function with the index open, closing it automatically afterward.
+ */
+export function withIndex<T>(fn: () => T): T {
+  openIndex();
+  try {
+    return fn();
+  } finally {
+    closeIndex();
+  }
 }
 
 /**

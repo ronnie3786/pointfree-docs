@@ -27,8 +27,7 @@ export async function cloneLibrary(lib: LibraryConfig): Promise<void> {
 
   const git: SimpleGit = simpleGit();
 
-  // Clone with sparse checkout for just the docs directories
-  // This saves bandwidth and disk space
+  // Sparse checkout: only download docs directories
   await git.clone(`https://github.com/${lib.repo}.git`, repoDir, [
     "--depth",
     "1",

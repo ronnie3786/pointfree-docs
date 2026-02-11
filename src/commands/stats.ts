@@ -3,7 +3,7 @@
  */
 
 import chalk from "chalk";
-import { getStats, openIndex, closeIndex } from "../lib/index.js";
+import { getStats, withIndex } from "../lib/index.js";
 import { LIBRARIES, getLibrary } from "../config.js";
 import { isLibraryCloned } from "../lib/repos.js";
 
@@ -11,10 +11,8 @@ interface StatsOptions {
   json?: boolean;
 }
 
-export async function statsCommand(options: StatsOptions): Promise<void> {
-  openIndex();
-  const stats = getStats();
-  closeIndex();
+export function statsCommand(options: StatsOptions): void {
+  const stats = withIndex(() => getStats());
 
   if (options.json) {
     console.log(JSON.stringify(stats, null, 2));

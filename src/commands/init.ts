@@ -3,7 +3,7 @@
  */
 
 import chalk from "chalk";
-import { LIBRARIES, getLibrary, getLibraryNames } from "../config.js";
+import { LIBRARIES, getLibrary, LIBRARY_NAMES } from "../config.js";
 import { cloneLibrary } from "../lib/repos.js";
 import { indexLibrary, openIndex, closeIndex } from "../lib/index.js";
 
@@ -26,7 +26,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
         librariesToInit.push(lib);
       } else {
         console.log(chalk.yellow(`  ⚠ Unknown library: ${name}`));
-        console.log(chalk.gray(`    Available: ${getLibraryNames().join(", ")}`));
+        console.log(chalk.gray(`    Available: ${LIBRARY_NAMES.join(", ")}`));
       }
     }
   }
@@ -35,7 +35,7 @@ export async function initCommand(options: InitOptions): Promise<void> {
     console.log(chalk.red("No valid libraries specified."));
     console.log(`\nUsage: pf-docs init --libs tca dependencies navigation`);
     console.log(`       pf-docs init --all`);
-    console.log(`\nAvailable libraries: ${getLibraryNames().join(", ")}`);
+    console.log(`\nAvailable libraries: ${LIBRARY_NAMES.join(", ")}`);
     return;
   }
 

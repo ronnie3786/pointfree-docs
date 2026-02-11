@@ -3,7 +3,7 @@
  */
 
 import chalk from "chalk";
-import { search as searchIndex, openIndex, closeIndex } from "../lib/index.js";
+import { search as searchIndex, withIndex } from "../lib/index.js";
 
 interface SearchOptions {
   lib?: string;
@@ -11,15 +11,10 @@ interface SearchOptions {
   json?: boolean;
 }
 
-export async function searchCommand(query: string, options: SearchOptions): Promise<void> {
-  openIndex();
-
+export function searchCommand(query: string, options: SearchOptions): void {
   const limit = options.limit ? parseInt(options.limit, 10) : 10;
-  const results = searchIndex(query, { lib: options.lib, limit });
+  const results = withIndex(() => searchIndex(query, { lib: options.lib, limit }));
 
-  closeIndex();
-
-  // JSON output for programmatic use
   if (options.json) {
     console.log(JSON.stringify({ query, results }, null, 2));
     return;
