@@ -5,26 +5,13 @@
 import chalk from "chalk";
 import { listDocs, getStats, withIndex, DocEntry } from "../lib/index.js";
 import { getLibrary, LIBRARIES, LIBRARY_NAMES, SourceType, SOURCE_TYPES, EXAMPLES_CONFIG, EPISODES_CONFIG } from "../config.js";
+import { getSourceLabel } from "../lib/format.js";
 
 interface ListOptions {
   tree?: boolean;
   json?: boolean;
   available?: boolean;
   source?: string;
-}
-
-/**
- * Get source type label with color
- */
-function getSourceLabel(source: SourceType): string {
-  switch (source) {
-    case "docs":
-      return chalk.cyan("[DOC]");
-    case "examples":
-      return chalk.magenta("[EXAMPLE]");
-    case "episodes":
-      return chalk.yellow("[EPISODE]");
-  }
 }
 
 export function listCommand(lib: string | undefined, options: ListOptions): void {

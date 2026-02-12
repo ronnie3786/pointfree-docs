@@ -6,7 +6,7 @@ A CLI tool for searching Point-Free library documentation locally. Uses sparse g
 
 See pf-docs in action: install, search, and real-world usage with Claude Code.
 
-https://github.com/ronnie3786/pointfree-docs/raw/main/demo.mp4
+https://github.com/user-attachments/assets/ed6c6340-2d29-4515-89ca-62f65cfa4755
 
 ## Quick Start
 

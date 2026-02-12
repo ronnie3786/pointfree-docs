@@ -5,7 +5,7 @@
 import Database from "better-sqlite3";
 import { existsSync, mkdirSync, readFileSync } from "fs";
 import { glob } from "glob";
-import { basename, dirname, join } from "path";
+import { basename, join } from "path";
 import { PATHS, LibraryConfig, SourceType, EXAMPLES_CONFIG, EPISODES_CONFIG } from "../config.js";
 import { getDocsPaths, getExamplesPaths, getEpisodesPath } from "./repos.js";
 import { cleanMarkdown, extractTitle } from "./markdown.js";
@@ -63,24 +63,6 @@ export function openIndex(): Database.Database {
       content='docs',
       content_rowid='id'
     );
-
-    -- Triggers to keep FTS index in sync
-    CREATE TRIGGER IF NOT EXISTS docs_ai AFTER INSERT ON docs BEGIN
-      INSERT INTO docs_fts(rowid, title, content, library, path, source)
-      VALUES (new.id, new.title, new.content, new.library, new.path, new.source);
-    END;
-
-    CREATE TRIGGER IF NOT EXISTS docs_ad AFTER DELETE ON docs BEGIN
-      INSERT INTO docs_fts(docs_fts, rowid, title, content, library, path, source)
-      VALUES ('delete', old.id, old.title, old.content, old.library, old.path, old.source);
-    END;
-
-    CREATE TRIGGER IF NOT EXISTS docs_au AFTER UPDATE ON docs BEGIN
-      INSERT INTO docs_fts(docs_fts, rowid, title, content, library, path, source)
-      VALUES ('delete', old.id, old.title, old.content, old.library, old.path, old.source);
-      INSERT INTO docs_fts(rowid, title, content, library, path, source)
-      VALUES (new.id, new.title, new.content, new.library, new.path, new.source);
-    END;
   `);
 
   // Add source column if it doesn't exist (migration for existing databases)
@@ -89,6 +71,31 @@ export function openIndex(): Database.Database {
   } catch {
     // Column already exists, ignore
   }
+
+  // Drop and recreate triggers to ensure they include the source column
+  // This handles migration from older schema versions
+  db.exec(`
+    DROP TRIGGER IF EXISTS docs_ai;
+    DROP TRIGGER IF EXISTS docs_ad;
+    DROP TRIGGER IF EXISTS docs_au;
+
+    CREATE TRIGGER docs_ai AFTER INSERT ON docs BEGIN
+      INSERT INTO docs_fts(rowid, title, content, library, path, source)
+      VALUES (new.id, new.title, new.content, new.library, new.path, new.source);
+    END;
+
+    CREATE TRIGGER docs_ad AFTER DELETE ON docs BEGIN
+      INSERT INTO docs_fts(docs_fts, rowid, title, content, library, path, source)
+      VALUES ('delete', old.id, old.title, old.content, old.library, old.path, old.source);
+    END;
+
+    CREATE TRIGGER docs_au AFTER UPDATE ON docs BEGIN
+      INSERT INTO docs_fts(docs_fts, rowid, title, content, library, path, source)
+      VALUES ('delete', old.id, old.title, old.content, old.library, old.path, old.source);
+      INSERT INTO docs_fts(rowid, title, content, library, path, source)
+      VALUES (new.id, new.title, new.content, new.library, new.path, new.source);
+    END;
+  `);
 
   return db;
 }

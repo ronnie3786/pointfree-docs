@@ -5,26 +5,13 @@
 import chalk from "chalk";
 import { search as searchIndex, withIndex } from "../lib/index.js";
 import { SourceType, SOURCE_TYPES } from "../config.js";
+import { getSourceLabel } from "../lib/format.js";
 
 interface SearchOptions {
   lib?: string;
   limit?: string;
   json?: boolean;
   source?: string;
-}
-
-/**
- * Get source type label with color
- */
-function getSourceLabel(source: SourceType): string {
-  switch (source) {
-    case "docs":
-      return chalk.cyan("[DOC]");
-    case "examples":
-      return chalk.magenta("[EXAMPLE]");
-    case "episodes":
-      return chalk.yellow("[EPISODE]");
-  }
 }
 
 export function searchCommand(query: string, options: SearchOptions): void {

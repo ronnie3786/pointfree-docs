@@ -104,10 +104,11 @@ export async function cloneEpisodes(): Promise<void> {
 
   const git: SimpleGit = simpleGit();
 
-  // Full clone with depth 1 (no sparse checkout - we want all episodes)
+  // Full clone with depth 1 and blob filter for efficiency
   await git.clone(`https://github.com/${EPISODES_CONFIG.repo}.git`, repoDir, [
     "--depth",
     "1",
+    "--filter=blob:none",
   ]);
 
   console.log(`  ✓ Cloned episodes`);

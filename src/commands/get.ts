@@ -3,8 +3,9 @@
  */
 
 import chalk from "chalk";
-import { getDoc, withIndex } from "../lib/index.js";
+import { getDoc, withIndex, DocWithContent } from "../lib/index.js";
 import { formatDocForOutput } from "../lib/markdown.js";
+import { getSourceLabel } from "../lib/format.js";
 
 interface GetOptions {
   json?: boolean;
@@ -34,10 +35,10 @@ function truncateContent(content: string, maxLines: number): { content: string; 
 }
 
 /**
- * Check if a path is likely code (not documentation)
+ * Check if a document is code (not documentation) based on its source
  */
-function isCodeFile(path: string): boolean {
-  return path.startsWith("examples/") || path.startsWith("episodes/");
+function isCodeFile(doc: DocWithContent): boolean {
+  return doc.source === "examples" || doc.source === "episodes";
 }
 
 export function getCommand(path: string, options: GetOptions = {}): void {
@@ -60,7 +61,7 @@ export function getCommand(path: string, options: GetOptions = {}): void {
     : DEFAULT_PREVIEW_LINES;
 
   // Apply preview mode for code files (examples/episodes)
-  const shouldPreview = options.preview || (isCodeFile(doc.path) && !options.raw);
+  const shouldPreview = options.preview || (isCodeFile(doc) && !options.raw);
   
   let outputContent = doc.content;
   let truncationInfo = "";
@@ -91,12 +92,8 @@ export function getCommand(path: string, options: GetOptions = {}): void {
   }
 
   // For code files, show with syntax hint
-  if (isCodeFile(doc.path)) {
-    const sourceLabel = doc.source === "examples" 
-      ? chalk.magenta("[EXAMPLE]") 
-      : chalk.yellow("[EPISODE]");
-    
-    console.log(`\n${sourceLabel} ${chalk.bold(doc.title)}`);
+  if (isCodeFile(doc)) {
+    console.log(`\n${getSourceLabel(doc.source)} ${chalk.bold(doc.title)}`);
     console.log(chalk.gray(`Path: ${doc.path}`));
     console.log(chalk.gray("─".repeat(60)));
     console.log(outputContent);

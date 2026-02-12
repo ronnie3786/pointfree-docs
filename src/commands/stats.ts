@@ -6,25 +6,10 @@ import chalk from "chalk";
 import { getStats, withIndex } from "../lib/index.js";
 import { LIBRARIES, getLibrary, SourceType, EXAMPLES_CONFIG, EPISODES_CONFIG } from "../config.js";
 import { isLibraryCloned, areExamplesCloned, areEpisodesCloned } from "../lib/repos.js";
+import { getSourceName } from "../lib/format.js";
 
 interface StatsOptions {
   json?: boolean;
-}
-
-/**
- * Get source type label with color
- */
-function getSourceLabel(source: SourceType): string {
-  switch (source) {
-    case "docs":
-      return chalk.cyan("docs");
-    case "examples":
-      return chalk.magenta("examples");
-    case "episodes":
-      return chalk.yellow("episodes");
-    default:
-      return source;
-  }
 }
 
 export function statsCommand(options: StatsOptions): void {
@@ -43,7 +28,7 @@ export function statsCommand(options: StatsOptions): void {
   // Show breakdown by source
   console.log(chalk.bold("By source:"));
   for (const [sourceName, count] of Object.entries(stats.bySource)) {
-    console.log(`  ${getSourceLabel(sourceName as SourceType)}: ${count} items`);
+    console.log(`  ${getSourceName(sourceName as SourceType)}: ${count} items`);
   }
   console.log();
 
