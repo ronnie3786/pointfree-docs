@@ -1,8 +1,13 @@
 /**
- * Configuration for Point-Free libraries
+ * Configuration for Point-Free libraries and example sources
  */
 
 import { join } from "path";
+
+/**
+ * Source types for documentation
+ */
+export type SourceType = "docs" | "examples" | "episodes";
 
 export interface LibraryConfig {
   name: string;
@@ -10,6 +15,23 @@ export interface LibraryConfig {
   repo: string;
   docsPaths: string[];  // Support multiple docs folders per library
   description: string;
+}
+
+export interface ExamplesConfig {
+  name: string;
+  shortName: string;
+  repo: string;
+  paths: string[];
+  description: string;
+  filePatterns: string[];  // e.g., ["**/*.swift"]
+}
+
+export interface EpisodesConfig {
+  name: string;
+  shortName: string;
+  repo: string;
+  description: string;
+  filePatterns: string[];
 }
 
 /**
@@ -112,6 +134,37 @@ export const LIBRARIES: LibraryConfig[] = [
 ];
 
 /**
+ * TCA Examples configuration (CaseStudies, SyncUps, etc.)
+ */
+export const EXAMPLES_CONFIG: ExamplesConfig = {
+  name: "tca-examples",
+  shortName: "examples",
+  repo: "pointfreeco/swift-composable-architecture",
+  paths: [
+    "Examples/CaseStudies",
+    "Examples/SyncUps",
+    "Examples/Todos",
+    "Examples/VoiceMemos",
+    "Examples/Search",
+    "Examples/TicTacToe",
+    "Examples/SpeechRecognition",
+  ],
+  description: "TCA example apps and case studies",
+  filePatterns: ["**/*.swift"],
+};
+
+/**
+ * Episode code samples configuration
+ */
+export const EPISODES_CONFIG: EpisodesConfig = {
+  name: "episode-code-samples",
+  shortName: "episodes",
+  repo: "pointfreeco/episode-code-samples",
+  description: "Point-Free episode code samples (350+ episodes)",
+  filePatterns: ["**/*.swift", "**/*.playground/**/*.swift"],
+};
+
+/**
  * Get library config by short name
  */
 export function getLibrary(shortName: string): LibraryConfig | undefined {
@@ -124,6 +177,11 @@ export function getLibrary(shortName: string): LibraryConfig | undefined {
  * All library short names
  */
 export const LIBRARY_NAMES = LIBRARIES.map((lib) => lib.shortName);
+
+/**
+ * All valid source types
+ */
+export const SOURCE_TYPES: SourceType[] = ["docs", "examples", "episodes"];
 
 /**
  * Paths configuration

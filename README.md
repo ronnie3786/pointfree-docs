@@ -37,7 +37,7 @@ pf-docs list tca
 
 ### `pf-docs list --available`
 
-Show all libraries available to download.
+Show all libraries available to download, plus additional sources (examples, episodes).
 
 ### `pf-docs init`
 
@@ -46,6 +46,9 @@ Download and index documentation. Only fetches `Documentation.docc` folders via 
 ```bash
 pf-docs init --libs tca dependencies navigation
 pf-docs init --all
+pf-docs init --examples           # TCA CaseStudies, SyncUps, etc.
+pf-docs init --episodes           # 350+ Point-Free episode code samples
+pf-docs init --all --examples --episodes  # Everything
 ```
 
 ### `pf-docs update`
@@ -53,8 +56,10 @@ pf-docs init --all
 Pull latest changes and re-index.
 
 ```bash
-pf-docs update              # All initialized libraries
-pf-docs update --libs tca   # Specific libraries
+pf-docs update                    # All initialized libraries
+pf-docs update --libs tca         # Specific libraries
+pf-docs update --examples         # Update examples
+pf-docs update --episodes         # Update episodes
 ```
 
 ### `pf-docs search <query>`
@@ -65,6 +70,12 @@ Full-text search across all indexed docs.
 pf-docs search "testing effects"
 pf-docs search "navigation" --lib tca
 pf-docs search "Store" --limit 5
+
+# Search by source type
+pf-docs search "TestStore" --source=docs      # Default: docs only
+pf-docs search "TestStore" --source=examples  # TCA examples only
+pf-docs search "TestStore" --source=episodes  # Episode code only
+pf-docs search "TestStore" --source=all       # Everything, labeled
 ```
 
 ### `pf-docs get <path>`
@@ -74,6 +85,11 @@ Fetch a specific article as clean markdown.
 ```bash
 pf-docs get tca/Articles/TestingTCA
 pf-docs get dependencies/Articles/QuickStart --raw
+
+# Code files show preview by default (50 lines)
+pf-docs get examples/CaseStudies/03-Effects-Basics.swift
+pf-docs get examples/CaseStudies/03-Effects-Basics.swift --raw      # Full content
+pf-docs get episodes/0156-testable-state/Main.swift --lines=100     # More lines
 ```
 
 ### `pf-docs list [lib]`
@@ -81,13 +97,15 @@ pf-docs get dependencies/Articles/QuickStart --raw
 List indexed documentation.
 
 ```bash
-pf-docs list                # All indexed docs
-pf-docs list tca --tree     # Tree view for one library
+pf-docs list                      # All indexed docs
+pf-docs list tca --tree           # Tree view for one library
+pf-docs list --source=examples    # Only examples
+pf-docs list --source=all         # All sources
 ```
 
 ### `pf-docs stats`
 
-Show indexing statistics.
+Show indexing statistics by source and library.
 
 All commands support `--json` for programmatic output.
 
@@ -110,12 +128,48 @@ All commands support `--json` for programmatic output.
 
 Run `pf-docs list --available` to see this list in your terminal.
 
+## Additional Sources
+
+| Source | Description | Flag |
+|--------|-------------|------|
+| `examples` | TCA CaseStudies, SyncUps, Todos, VoiceMemos, etc. | `--examples` |
+| `episodes` | 350+ Point-Free episode code samples | `--episodes` |
+
+### Source Types for Search
+
+When searching, you can filter by source type:
+
+- `docs` (default) — Library documentation (DocC articles)
+- `examples` — TCA example apps and case studies
+- `episodes` — Point-Free episode code samples
+- `all` — Everything, with labels showing the source
+
+```bash
+# Search docs for concepts
+pf-docs search "testing effects"
+
+# Search examples for real implementations
+pf-docs search "TestStore" --source=examples
+
+# Search everything
+pf-docs search "dependency injection" --source=all
+```
+
+Results with `--source=all` are labeled:
+```
+[DOC]     tca/Articles/Testing           (0.94)
+[EXAMPLE] CaseStudies/03-Effects-Basics  (0.82)
+[EPISODE] Ep156: Testable State          (0.71)
+```
+
 ## Usage with Claude Code
 
 Add the key commands to your project's `CLAUDE.md`:
 
 ```markdown
-Use `pf-docs search "<query>"` to search Point-Free docs, `pf-docs get <path>` to read an article.
+Use `pf-docs search "<query>"` to search Point-Free docs.
+Use `pf-docs search "<query>" --source=examples` to find real code examples.
+Use `pf-docs get <path>` to read an article or code file.
 ```
 
 ## Adding Libraries

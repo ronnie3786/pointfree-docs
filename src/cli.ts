@@ -19,19 +19,23 @@ const program = new Command();
 program
   .name("pf-docs")
   .description("CLI tool for searching Point-Free library documentation")
-  .version("0.1.0");
+  .version("0.2.0");
 
 program
   .command("init")
   .description("Initialize and download documentation for specified libraries")
   .option("-l, --libs <libs...>", "Libraries to download (e.g., tca dependencies)")
   .option("-a, --all", "Download all available libraries")
+  .option("-e, --examples", "Download TCA examples (CaseStudies, SyncUps, etc.)")
+  .option("-p, --episodes", "Download Point-Free episode code samples (350+)")
   .action(initCommand);
 
 program
   .command("update")
   .description("Update documentation from remote repositories")
   .option("-l, --libs <libs...>", "Specific libraries to update")
+  .option("-e, --examples", "Update examples")
+  .option("-p, --episodes", "Update episodes")
   .action(updateCommand);
 
 program
@@ -39,6 +43,7 @@ program
   .description("Search across all indexed documentation")
   .option("-l, --lib <lib>", "Limit search to specific library")
   .option("-n, --limit <n>", "Max results to return", "10")
+  .option("-s, --source <source>", "Source type: docs, examples, episodes, all (default: docs)")
   .option("-j, --json", "Output results as JSON")
   .action(searchCommand);
 
@@ -47,6 +52,8 @@ program
   .description("Get a specific documentation article (e.g., tca/Testing)")
   .option("-j, --json", "Output as JSON")
   .option("-r, --raw", "Output raw content without header")
+  .option("-p, --preview", "Preview mode (first 50 lines for code files)")
+  .option("--lines <n>", "Number of lines to show in preview mode", "50")
   .action(getCommand);
 
 program
@@ -55,6 +62,7 @@ program
   .option("-t, --tree", "Show as tree structure")
   .option("-j, --json", "Output as JSON")
   .option("-a, --available", "Show all libraries available to download")
+  .option("-s, --source <source>", "Filter by source: docs, examples, episodes, all")
   .action(listCommand);
 
 program
