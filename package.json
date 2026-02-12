@@ -1,6 +1,6 @@
 {
   "name": "pointfree-docs",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "CLI tool for searching Point-Free library documentation",
   "type": "module",
   "bin": {
