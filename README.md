@@ -2,6 +2,12 @@
 
 A CLI tool for searching Point-Free library documentation locally. Uses sparse git checkout and SQLite FTS5 for fast, offline full-text search. Built for use with AI coding assistants like Claude Code.
 
+## Demo
+
+See pf-docs in action: install, search, and real-world usage with Claude Code.
+
+https://github.com/ronnie3786/pointfree-docs/raw/main/demo.mp4
+
 ## Quick Start
 
 ```bash
