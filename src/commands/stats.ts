@@ -4,11 +4,27 @@
 
 import chalk from "chalk";
 import { getStats, withIndex } from "../lib/index.js";
-import { LIBRARIES, getLibrary } from "../config.js";
-import { isLibraryCloned } from "../lib/repos.js";
+import { LIBRARIES, getLibrary, SourceType, EXAMPLES_CONFIG, EPISODES_CONFIG } from "../config.js";
+import { isLibraryCloned, areExamplesCloned, areEpisodesCloned } from "../lib/repos.js";
 
 interface StatsOptions {
   json?: boolean;
+}
+
+/**
+ * Get source type label with color
+ */
+function getSourceLabel(source: SourceType): string {
+  switch (source) {
+    case "docs":
+      return chalk.cyan("docs");
+    case "examples":
+      return chalk.magenta("examples");
+    case "episodes":
+      return chalk.yellow("episodes");
+    default:
+      return source;
+  }
 }
 
 export function statsCommand(options: StatsOptions): void {
@@ -21,13 +37,21 @@ export function statsCommand(options: StatsOptions): void {
 
   console.log(chalk.bold("\n📊 pf-docs Statistics\n"));
 
-  console.log(chalk.blue(`Total indexed documents: ${stats.totalDocs}`));
+  console.log(chalk.blue(`Total indexed items: ${stats.totalDocs}`));
   console.log();
 
-  console.log(chalk.bold("Indexed libraries:"));
+  // Show breakdown by source
+  console.log(chalk.bold("By source:"));
+  for (const [sourceName, count] of Object.entries(stats.bySource)) {
+    console.log(`  ${getSourceLabel(sourceName as SourceType)}: ${count} items`);
+  }
+  console.log();
+
+  // Show breakdown by library
+  console.log(chalk.bold("By library:"));
   for (const [libName, count] of Object.entries(stats.byLibrary)) {
     const libConfig = getLibrary(libName);
-    console.log(`  ${chalk.green("●")} ${libName}: ${count} docs`);
+    console.log(`  ${chalk.green("●")} ${libName}: ${count} items`);
     if (libConfig) {
       console.log(chalk.gray(`      ${libConfig.description}`));
     }
@@ -47,5 +71,26 @@ export function statsCommand(options: StatsOptions): void {
     }
     console.log();
     console.log(chalk.gray(`To add: pf-docs init --libs ${notIndexed[0].shortName}`));
+  }
+
+  // Show examples/episodes status
+  const extrasNotIndexed: string[] = [];
+  if (!areExamplesCloned()) {
+    extrasNotIndexed.push("examples");
+  }
+  if (!areEpisodesCloned()) {
+    extrasNotIndexed.push("episodes");
+  }
+
+  if (extrasNotIndexed.length > 0) {
+    console.log(chalk.bold("Additional sources (not indexed):"));
+    if (extrasNotIndexed.includes("examples")) {
+      console.log(`  ${chalk.gray("○")} examples — ${EXAMPLES_CONFIG.description}`);
+    }
+    if (extrasNotIndexed.includes("episodes")) {
+      console.log(`  ${chalk.gray("○")} episodes — ${EPISODES_CONFIG.description}`);
+    }
+    console.log();
+    console.log(chalk.gray(`To add: pf-docs init --examples --episodes`));
   }
 }
