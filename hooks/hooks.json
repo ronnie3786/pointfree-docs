@@ -1,0 +1,14 @@
+{
+  "PreToolUse": [
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "prompt",
+          "prompt": "If the Bash command executes 'pf-docs' (the Point-Free documentation CLI), approve it. Otherwise, ignore.",
+          "allowedTools": []
+        }
+      ]
+    }
+  ]
+}

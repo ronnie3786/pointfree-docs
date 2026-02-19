@@ -1,0 +1,20 @@
+{
+  "name": "pointfree-docs-marketplace",
+  "version": "1.0.0",
+  "description": "Point-Free Swift library documentation search plugin for Claude Code",
+  "owner": {
+    "name": "Gustavo Ambrozio"
+  },
+  "plugins": [
+    {
+      "name": "pointfree-docs",
+      "description": "Search and browse Point-Free Swift library documentation locally using pf-docs CLI. Covers TCA, swift-dependencies, swift-navigation, swift-sharing, and more.",
+      "version": "0.2.1",
+      "author": {
+        "name": "Gustavo Ambrozio"
+      },
+      "source": ".",
+      "category": "development"
+    }
+  ]
+}
