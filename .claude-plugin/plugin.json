@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "description": "Search and browse Point-Free Swift library documentation locally using pf-docs CLI",
   "author": {
-    "name": "Gustavo Ambrozio"
+    "name": "Ronnie Rocha"
   },
   "repository": "https://github.com/ronnie3786/pointfree-docs",
   "license": "MIT",
