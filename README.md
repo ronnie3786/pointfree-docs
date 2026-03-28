@@ -10,6 +10,21 @@ https://github.com/user-attachments/assets/ed6c6340-2d29-4515-89ca-62f65cfa4755
 
 ## Quick Start
 
+### Claude Code Plugin
+
+Install as a Claude Code plugin so Claude can search Point-Free docs automatically:
+
+```bash
+claude plugin marketplace add ronnie3786/pointfree-docs
+claude plugin install pointfree-docs
+```
+
+The plugin handles CLI installation and doc indexing for you. Once installed, Claude will use `pf-docs` whenever you're working with Point-Free libraries.
+
+### Direct CLI Install
+
+Install the CLI standalone for use in your terminal or with other tools:
+
 ```bash
 # Install from npm
 npm install -g pointfree-docs
