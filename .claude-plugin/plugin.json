@@ -1,0 +1,11 @@
+{
+  "name": "pointfree-docs",
+  "version": "0.2.1",
+  "description": "Search and browse Point-Free Swift library documentation locally using pf-docs CLI",
+  "author": {
+    "name": "Ronnie Rocha"
+  },
+  "repository": "https://github.com/ronnie3786/pointfree-docs",
+  "license": "MIT",
+  "keywords": ["pointfree", "point-free", "swift", "documentation", "tca", "composable-architecture"]
+}
