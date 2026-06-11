@@ -4,7 +4,7 @@
   "description": "CLI tool for searching Point-Free library documentation",
   "type": "module",
   "bin": {
-    "pf-docs": "./dist/cli.js"
+    "pf-docs": "dist/cli.js"
   },
   "files": [
     "dist",
