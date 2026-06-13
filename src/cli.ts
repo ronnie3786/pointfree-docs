@@ -7,6 +7,7 @@
  */
 
 import { Command } from "commander";
+import { createRequire } from "node:module";
 import { initCommand } from "./commands/init.js";
 import { updateCommand } from "./commands/update.js";
 import { searchCommand } from "./commands/search.js";
@@ -14,6 +15,8 @@ import { getCommand } from "./commands/get.js";
 import { listCommand } from "./commands/list.js";
 import { statsCommand } from "./commands/stats.js";
 
+const require = createRequire(import.meta.url);
+const packageMetadata = require("../package.json") as { version: string };
 const program = new Command();
 
 program
@@ -34,7 +37,7 @@ Path format:  <library>/<Articles|Tutorials|Extensions>/<Name>
 
 All commands support --json for machine-readable output.`
   )
-  .version("0.2.2");
+  .version(packageMetadata.version);
 
 program
   .command("init")
